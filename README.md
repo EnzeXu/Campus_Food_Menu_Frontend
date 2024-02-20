@@ -3,6 +3,12 @@
 
 Welcome to the Food Menu Website, a simple yet interactive website designed to showcase our delightful menu selections including starters, mains, and desserts. This website is built with HTML, CSS, and JavaScript, ensuring a smooth user experience.
 
+---
+
+<img width="558" alt="image" src="https://github.com/EnzeXu/Campus_Food_Menu/assets/90367338/9cf11c6d-5102-4c79-af45-de14d8c61851">
+
+---
+
 ## Table of Contents
 
 - [Introduction](#introduction)
