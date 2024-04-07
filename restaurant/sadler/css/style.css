@@ -442,12 +442,12 @@ button:focus,
  *-------------------*/
 /*circuits*/
 .jumbotron {
-    background            : url("../img/wm-background.jpeg");
+    background            : url("../../../img/wm-background.jpeg");
     background-size       : cover;
     padding               : 0;
     margin                : 0;
-    height                : 100vh;
-    min-height            : 700px;
+    height                : 40vh;
+    /*min-height            : 700px;*/
     vertical-align        : middle;
     position              : relative;
     background-attachment : fixed;
@@ -862,7 +862,7 @@ font-size      : 16px;
 
 #status,
 .status-mes {
-    background-image    : url(../img/preloader.gif);
+    background-image    : url(../../../img/preloader.gif);
     background-position : center;
     background-repeat   : no-repeat;
     height              : 200px;
@@ -998,35 +998,3 @@ section div p.lead{
 /*    margin-left : -15px;*/
 /*    font-size: 24px;*/
 /*}*/
-
-/*food menu*/
-
-.section-wrapper {
-    padding: 20px 0;
-}
-
-.section-title h1 {
-    margin-bottom: 20px;
-    text-align: center;
-}
-
-.search-form .form-group {
-    display: flex;
-    align-items: center;
-}
-
-.search-form label {
-    margin-bottom: 0;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .search-form .form-group {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .search-form label {
-        margin-bottom: 0.5rem;
-    }
-}
