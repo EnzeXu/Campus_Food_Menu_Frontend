@@ -794,22 +794,31 @@ font-size      : 16px;
  *-------------------*/
 
 .form-control {
-    height        : 46px;
+    height        : 40px;
     padding       : 0 20px;
-    font-size     : 14px;
-    line-height   : 46px;
-    color         : #969595;
-    border        : 1px solid #f1f1f1;
+    font-size     : 18px;
+    line-height   : 40px;
+    /*color         : #1A1A1A;*/
+    border        : 1px solid #1A1A1A;
     border-radius : 0;
     box-shadow    : none;
-    }
+    font-weight: 400;
+}
+
+.custom-select {
+    height: 40px;
+    width: 250px;
+    border: 1px solid #090909;
+    padding: 0 20px;
+    font-weight: 400;
+}
 
 .form-control.input-lg {
     height        : 60px;
     padding       : 0 20px;
     font-size     : 18px;
     line-height   : 60px;
-    color         : #969595;
+    color         : #333333;
     border        : 1px solid #f1f1f1;
     border-radius : 0;
     box-shadow    : none;
@@ -998,3 +1007,20 @@ section div p.lead{
 /*    margin-left : -15px;*/
 /*    font-size: 24px;*/
 /*}*/
+
+.form-group {
+    display: inline-block;
+    /*padding-left: 20px;*/
+    padding-right: 20px;
+}
+
+.choice-block {
+    display: inline-block;
+    text-align: center;
+}
+
+.btn {
+    text-align: center;
+    height: 40px;
+}
+

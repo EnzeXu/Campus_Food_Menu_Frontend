@@ -155,27 +155,45 @@
                             </div>
                             <form class="search-form d-flex flex-wrap align-items-center">
                                 <div class="form-group mb-2 mr-2">
-                                    <label for="date-choice" class="mr-2">Date Choice:</label>
-                                    <input class="form-control" type="date" id="date-choice" name="date">
+                                    <div class="choice-block"><label for="date-choice" class="mr-2">Date:</label></div>
+                                    <div class="choice-block"><input class="form-control" type="date" id="date-choice" name="date"></div>
                                 </div>
                                 <div class="form-group mb-2 mr-2">
-                                    <label for="station-choice" class="mr-2">Station Choice:</label>
-                                    <select class="custom-select" id="station-choice">
-                                        <option selected value="">(all)</option>
-                                        <!-- Dynamically populate station options here -->
-                                    </select>
+                                    <div class="choice-block"><label for="location-choice" class="mr-2">Location:</label></div>
+                                    <div class="choice-block">
+                                        <select class="custom-select" id="location-choice">
+<!--                                            <option selected value="">(all)</option>-->
+                                            <!-- Dynamically populate location options here -->
+                                        </select>
+                                    </div>
                                 </div>
                                 <div class="form-group mb-2 mr-2">
-                                    <label for="keyword-input" class="mr-2">Keywords:</label>
-                                    <input class="form-control" type="text" id="keyword-input" placeholder="(all)">
+                                    <div class="choice-block"><label for="period-choice" class="mr-2">Period:</label></div>
+                                    <div class="choice-block">
+                                        <select class="custom-select" id="period-choice">
+<!--                                            <option selected value=""></option>-->
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group mb-2 mr-2">
+                                    <div class="choice-block">
+                                        <label for="keyword-input" class="mr-2">Keywords:</label>
+                                    </div>
+                                    <div class="choice-block">
+                                        <input class="form-control" type="text" id="keyword-input" placeholder="(None)">
+                                    </div>
                                 </div>
                                 <div class="form-group mb-2">
-                                    <button type="submit" class="btn btn-primary">Search</button>
+                                    <div class="choice-block">
+                                        <button type="submit" class="btn btn-primary" style="padding-bottom: 10px">Search</button>
+                                    </div>
                                 </div>
                             </form>
 
                         </div>
+
                     </div>
+                    <div id="search-results"></div>
                 </div>
             </section>
 
