@@ -34,6 +34,71 @@ function highlightKeywordInText(text, keyword) {
     return text.replace(regex, match => `<span style="color: blue;">${match}</span>`);
 }
 
+function fetchDataFromPath(path) {
+    return fetch(path)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        });
+}
+
+function displayResults(results, keyword) {
+    // Start building the table HTML
+    let product_keywords = ["PeriodId", "StationId", "ProductId", "MarketingName", "ShortDescription", "IsOrganic", "IsVegan", "IsVegetarian", "ServingSize", "ServingUnit", "Calories", "CaloriesFromFat", "IngredientStatement"];
+    let title_html = "";
+    product_keywords.forEach(item => {
+        title_html += `<th>${item}</th>`;
+    });
+    let tableHTML = `<table class="table"><thead><tr>` + title_html + `</tr></thead><tbody>`;
+
+    // Populate the table with results
+    let body_html = "";
+    results.forEach(item => {
+        if (keyword.length === 0 || (`${item["MarketingName"]}/${item["ShortDescription"]}/${item["IngredientStatement"]}`).toLowerCase().includes(keyword.toLowerCase())) {
+            let content_html = "";
+            product_keywords.forEach(one_keyword => {
+                let content;
+                if (keyword.length === 0) {
+                    content = item[one_keyword];
+                } else {
+                    content = highlightKeywordInText(String(item[one_keyword]), String(keyword));
+                }
+                content_html += `<td>${content}</td>`;
+            });
+            body_html += `<tr>` + content_html + `</tr>`;
+        }
+    });
+    tableHTML += body_html;
+    tableHTML += `</tbody></table>`;
+    console.log(tableHTML);
+
+    if (body_html.length > 0) {
+        document.getElementById('search-results').innerHTML = tableHTML;
+    } else {
+        document.getElementById('search-results').innerHTML = "<p>Data not found for the given criteria.</p>";
+    }
+
+}
+
+function processData(data, inverse_location_dictionary, inverse_period_dictionary, location, period, date, keyword) {
+    console.log(data["location_data"]);
+    try {
+        const location_id = inverse_location_dictionary[location];
+        const period_id = inverse_period_dictionary[period];
+        console.log("location id:", location_id);
+        console.log("period id:", period_id);
+        console.log(`fetching data["location_data"][${location_id}]["date_data"][${date}][${period_id}]`);
+        const results = data["location_data"][location_id]["date_data"][date][period_id];
+        console.log("results:", results);
+        displayResults(results, keyword); // Function to display results in a table
+    } catch (error) {
+        console.error("Data not found for the given criteria", error);
+        document.getElementById('search-results').innerHTML = "<p>Data not found for the given criteria.</p>";
+    }
+}
+
 
 document.addEventListener('DOMContentLoaded', function() {
     document.querySelector('.search-form').addEventListener('submit', function(e) {
@@ -59,67 +124,45 @@ document.addEventListener('DOMContentLoaded', function() {
         };
 
         // Fetch data from the local JSON file
-        fetch('../local_data/data.json')
-            .then(response => response.json())
+        // fetch('../local_data/data.json')
+        //     .then(response => response.json())
+        //     .then(data => {
+        //         console.log(data["location_data"]);
+        //         // Assuming data is in the format data["d"]["s"]["p"]["k"]
+        //         try {
+        //             const location_id = inverse_location_dictionary[location];
+        //             const period_id = inverse_period_dictionary[period];
+        //             console.log("location id:", location_id);
+        //             console.log("period id:", period_id);
+        //             console.log(`fetching data["location_data"][${location_id}]["date_data"][${date}][${period_id}]`);
+        //             const results = data["location_data"][location_id]["date_data"][date][period_id];
+        //             console.log("results:", results);
+        //             displayResults(results, keyword); // Function to display results in a table
+        //         } catch (error) {
+        //             console.error("Data not found for the given criteria", error);
+        //             document.getElementById('search-results').innerHTML = "<p>Data not found for the given criteria.</p>";
+        //         }
+        //     })
+        //     .catch(error => {
+        //         console.error("Error fetching data:", error);
+        //     });
+        fetchDataFromPath('../local_data/data.json')
             .then(data => {
-                console.log(data["location_data"]);
-                // Assuming data is in the format data["d"]["s"]["p"]["k"]
-                try {
-                    const location_id = inverse_location_dictionary[location];
-                    const period_id = inverse_period_dictionary[period];
-                    console.log("location id:", location_id);
-                    console.log("period id:", period_id);
-                    console.log(`fetching data["location_data"][${location_id}]["date_data"][${date}][${period_id}]`);
-                    const results = data["location_data"][location_id]["date_data"][date][period_id];
-                    console.log("results:", results);
-                    displayResults(results, keyword); // Function to display results in a table
-                } catch (error) {
-                    console.error("Data not found for the given criteria", error);
-                    document.getElementById('search-results').innerHTML = "<p>Data not found for the given criteria.</p>";
-                }
+                processData(data, inverse_location_dictionary, inverse_period_dictionary, location, period, date, keyword);
             })
             .catch(error => {
-                console.error("Error fetching data:", error);
+                console.error("Error fetching data from first path:", error);
+                // Try the second path if the first fails
+                fetchDataFromPath('../Campus_Food_Menu/local_data/data.json')
+                    .then(data => {
+                        processData(data, inverse_location_dictionary, inverse_period_dictionary, location, period, date, keyword);
+                    })
+                    .catch(finalError => {
+                        console.error("Error fetching data from second path:", finalError);
+                        document.getElementById('search-results').innerHTML = "<p>Unable to fetch data from both paths.</p>";
+                    });
             });
     });
-
-    function displayResults(results, keyword) {
-        // Start building the table HTML
-        let product_keywords = ["PeriodId", "StationId", "ProductId", "MarketingName", "ShortDescription", "IsOrganic", "IsVegan", "IsVegetarian", "ServingSize", "ServingUnit", "Calories", "CaloriesFromFat", "IngredientStatement"];
-        let title_html = "";
-        product_keywords.forEach(item => {
-            title_html += `<th>${item}</th>`;
-        });
-        let tableHTML = `<table class="table"><thead><tr>` + title_html + `</tr></thead><tbody>`;
-
-        // Populate the table with results
-        let body_html = "";
-        results.forEach(item => {
-            if (keyword.length === 0 || (`${item["MarketingName"]}/${item["ShortDescription"]}/${item["IngredientStatement"]}`).toLowerCase().includes(keyword.toLowerCase())) {
-                let content_html = "";
-                product_keywords.forEach(one_keyword => {
-                    let content;
-                    if (keyword.length === 0) {
-                        content = item[one_keyword];
-                    } else {
-                        content = highlightKeywordInText(String(item[one_keyword]), String(keyword));
-                    }
-                    content_html += `<td>${content}</td>`;
-                });
-                body_html += `<tr>` + content_html + `</tr>`;
-            }
-        });
-        tableHTML += body_html;
-        tableHTML += `</tbody></table>`;
-        console.log(tableHTML);
-
-        if (body_html.length > 0) {
-            document.getElementById('search-results').innerHTML = tableHTML;
-        } else {
-            document.getElementById('search-results').innerHTML = "<p>Data not found for the given criteria.</p>";
-        }
-
-    }
 });
 
 function getOperatingSystem() {
@@ -135,4 +178,4 @@ function getOperatingSystem() {
     }
 }
 
-console.log(getOperatingSystem());
+console.log("Platform: ", getOperatingSystem());
