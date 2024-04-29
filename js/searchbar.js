@@ -124,9 +124,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function getOperatingSystem() {
     var platform = navigator.platform.toLowerCase();
-    var userAgent = navigator.userAgent.toLowerCase();
+    // var userAgent = navigator.userAgent.toLowerCase();
 
-    if (platform.includes('mac') || userAgent.includes('mac os')) {
+    if (platform.includes('mac')) {
         return 'macOS';
     } else if (platform.includes('linux')) {
         return 'Linux';
