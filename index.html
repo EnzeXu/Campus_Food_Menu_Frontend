@@ -21,6 +21,8 @@
         <!-- Style CSS -->
         <link href="css/style.css" rel="stylesheet">
 
+        <script src="https://d3js.org/d3.v6.min.js"></script>
+
 
     </head>
 
@@ -228,7 +230,7 @@
                                 </div>
                                 <div class="form-group mb-2">
                                     <div class="choice-block">
-                                        <button type="submit" class="btn btn-primary" style="padding-bottom: 10px">Search</button>
+                                        <button type="submit" class="btn btn-primary" style="padding-bottom: 10px" id="button-search">Search</button>
                                     </div>
                                 </div>
                             </form>
@@ -245,16 +247,39 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="section-title">
-                                <h1>Menu History Analysis [TODO]</h1>
+                                <h1>Menu History Analysis - Meat Types</h1>
                             </div>
-                            <div class="form-group">
-                                <img src="img/analysis_demo.png" alt="Analysis" height="300px" width="auto">
-                                <img src="img/analysis_demo.png" alt="Analysis" height="300px" width="auto">
-                                <img src="img/analysis_demo.png" alt="Analysis" height="300px" width="auto">
-                            </div>
+                            <form class="search-form-week d-flex flex-wrap align-items-center">
+                                <div class="form-group mb-2 mr-2">
+                                    <div class="choice-block"><label for="location-choice-week" class="mr-2">Location:</label></div>
+                                    <div class="choice-block">
+                                        <select class="custom-select" id="location-choice-week">
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group mb-2 mr-2">
+                                    <div class="choice-block"><label for="meat-choice" class="mr-2">Meat Type:</label></div>
+                                    <div class="choice-block">
+                                        <select class="custom-select" id="meat-choice">
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group mb-2">
+                                    <div class="choice-block">
+                                        <button type="submit" class="btn btn-primary" style="padding-bottom: 10px" id="button-week">Analyze</button>
+                                    </div>
+                                </div>
+                            </form>
+<!--                            <div class="form-group">-->
+<!--                                <div id="week-info-chart"></div>-->
+<!--&lt;!&ndash;                                <img src="img/analysis_demo.png" alt="Analysis" height="300px" width="auto">&ndash;&gt;-->
+<!--&lt;!&ndash;                                <img src="img/analysis_demo.png" alt="Analysis" height="300px" width="auto">&ndash;&gt;-->
+<!--&lt;!&ndash;                                <img src="img/analysis_demo.png" alt="Analysis" height="300px" width="auto">&ndash;&gt;-->
+<!--                            </div>-->
 
                         </div>
                     </div>
+                    <div id="week-info-chart"></div>
                 </div>
             </section>
 

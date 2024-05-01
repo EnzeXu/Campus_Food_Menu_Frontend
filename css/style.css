@@ -794,10 +794,10 @@ button:focus,
  *-------------------*/
 
 .form-control {
-    height        : 40px;
+    height        : 50px;
     padding       : 0 20px;
     font-size     : 18px;
-    line-height   : 40px;
+    line-height   : 50px;
     /*color         : #1A1A1A;*/
     border        : 1px solid #1A1A1A;
     border-radius : 0;
@@ -806,7 +806,7 @@ button:focus,
 }
 
 .custom-select {
-    height: 40px;
+    height: 50px;
     width: 250px;
     border: 1px solid #090909;
     padding: 0 20px;
@@ -1021,6 +1021,6 @@ section div p.lead{
 
 .btn {
     text-align: center;
-    height: 40px;
+    height: 50px;
 }
 
