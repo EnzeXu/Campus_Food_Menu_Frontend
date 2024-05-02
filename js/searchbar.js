@@ -576,7 +576,16 @@ function displayWeekInfo(data, categories) {
             console.log("mouseover");
             console.log(d);
             pieData = pieDataFramework;
-            pieData.labels = Object.keys(d.distribution).map(one_key => station_dictionary[one_key]);
+            let n_list = Array.from({ length: Object.keys(d.distribution).length }, (_, i) => i);
+            console.log(n_list);
+
+// Assuming d.value is an array of the same length as d.distribution
+            pieData.labels = n_list.map(one_index => {
+                let station = station_dictionary[Object.keys(d.distribution)[one_index]];
+                let value = Object.values(d.distribution)[one_index];
+                return `${station} (${value})`;
+            });
+            console.log(pieData.labels)
             pieData.datasets[0].data = Object.values(d.distribution);
             pieData.datasets[0].backgroundColor = Object.keys(d.distribution).map(one_key => {
                 let seed = +one_key;
@@ -598,7 +607,7 @@ function displayWeekInfo(data, categories) {
                             labels: {
                                 color: "black",
                                 font: {
-                                    size: 17, // Set desired font size
+                                    size: 12, // Set desired font size
                                     // family: 'Arial, sans-serif', // Set desired font family
                                     // weight: 'bold' // Set desired font weight
                                 }
