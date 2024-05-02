@@ -1,9 +1,17 @@
-const target_food_keys = {
+const target_food_keys_meat = {
     "chicken": ["chicken"],
     "pork": ["pork", "ham"],
     "beef": ["beef", "steak"],
     "fish": ["fish", "fillet", "tilapia", "salmon", "cod", "tuna", "catfish"],
     "shrimp": ["shrimp"],
+};
+
+const target_food_keys_veg = {
+    "potato": ["potato"],
+    "broccoli": ["broccoli"],
+    "carrot": ["carrot"],
+    "cabbage": ["cabbage"],
+    "cauliflower": ["cauliflower"],
 };
 
 const color_dic = {
@@ -12,7 +20,13 @@ const color_dic = {
     "beef": "#bebada",
     "fish": "#fb8072",
     "shrimp": "#80b1d3",
+    "potato": "#fbb4ae",
+    "broccoli": "#b3cde3",
+    "carrot": "#ccebc5",
+    "cabbage": "#decbe4",
+    "cauliflower": "#fed9a6",
 }
+
 
 const inverse_location_dictionary = {
     "Commons Dining Hall": 78390,
@@ -57,6 +71,7 @@ const station_dictionary = {
     "45219": "Fruit And Yogurt Bar",
     "45621": "Toppings Bar",
     "46414": "Tb Smoothies",
+    "Others": "Others",
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -80,15 +95,38 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 document.addEventListener('DOMContentLoaded', function() {
+    let locationChoice = document.getElementById('location-choice-week-veg');
+    let locationList = ['Commons Dining Hall', 'Food Hall @ Sadler']; // Example location list
+
+    locationList.forEach(function(location) {
+        let option = new Option(location, location);
+        locationChoice.add(option);
+    });
+});
+
+document.addEventListener('DOMContentLoaded', function() {
     let meatChoice = document.getElementById('meat-choice');
-    let meatList = ["All"].concat(Object.keys(target_food_keys));
+    let meatList = ["All"].concat(Object.keys(target_food_keys_meat));
     // console.log(meatList)
-    // console.log(Array.from(Object.keys(target_food_keys)))
-    // console.log(Object.keys(target_food_keys))
+    // console.log(Array.from(Object.keys(target_food_keys_meat)))
+    // console.log(Object.keys(target_food_keys_meat))
 
     meatList.forEach(function(location) {
         let option = new Option(location, location);
         meatChoice.add(option);
+    });
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    let vegChoice = document.getElementById('veg-choice');
+    let vegList = ["All"].concat(Object.keys(target_food_keys_veg));
+    // console.log(meatList)
+    // console.log(Array.from(Object.keys(target_food_keys_meat)))
+    // console.log(Object.keys(target_food_keys_meat))
+
+    vegList.forEach(function(location) {
+        let option = new Option(location, location);
+        vegChoice.add(option);
     });
 });
 
@@ -257,7 +295,26 @@ function processDataWeek(location_id, meat_choice) {
             if (meat_choice !== "All") {
                 categories = [meat_choice];
             }
-            displayWeekInfo(data_week, categories);
+            displayWeekInfo(data_week, categories, "#week-info-chart-meat", "pieChart", 'station-distribution-results');
+
+        })
+        .catch(error => {
+            console.error("Error fetching data:", error);
+        });
+}
+
+function processDataWeekVeg(location_id, meat_choice) {
+    fetchDataFromPath('../local_data/data.json')
+        .then(data => {
+            let data_location = data["location_data"][location_id]["date_data"]; // [date][period_id]
+            let available_dates = data["location_data"][location_id]["date_list"];
+            let data_week = collectWeekInfo(data_location, available_dates, target_food_keys_veg);
+            console.log("data_week:", data_week);
+            let categories = Object.keys(data_week[0]["week_count_sum_dic"]);
+            if (meat_choice !== "All") {
+                categories = [meat_choice];
+            }
+            displayWeekInfo(data_week, categories, "#week-info-chart-veg", "pieChart-veg", 'station-distribution-results-veg', "veg");
 
         })
         .catch(error => {
@@ -277,6 +334,20 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log("'" + location + "', '" + meat_choice + "'");
 
         processDataWeek(location_id, meat_choice);
+    });
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelector('.search-form-week-veg').addEventListener('submit', function(e) {
+        e.preventDefault(); // Prevent the default form submission
+
+        // Getting user inputs
+        const location = document.getElementById('location-choice-week-veg').value;
+        const veg_choice = document.getElementById('veg-choice').value;
+        const location_id = inverse_location_dictionary[location];
+        console.log("'" + location + "', '" + veg_choice + "'");
+
+        processDataWeekVeg(location_id, veg_choice);
     });
 });
 
@@ -318,7 +389,7 @@ function updateDictionaryByOne(base_dic, add_class) {
     return base_dic;
 }
 
-function collectWeekInfo(dic, available_dates) {
+function collectWeekInfo(dic, available_dates, target_food_keys=target_food_keys_meat) {
     console.log(dic);
     const millisecondsPerDay = 24 * 60 * 60 * 1000; // Number of milliseconds in a day
     let weekIndex = 0;
@@ -473,8 +544,51 @@ const pieDataFramework = {
     }]
 };
 
+function clearDic(data, skip=false, threshold=0.85) {
+    if (skip) {
+        return data;
+    } else {
+        let entries = Object.entries(data).sort(([, a], [, b]) => b - a);
 
-function displayWeekInfo(data, categories) {
+        // Calculate the total sum
+        let totalSum = entries.reduce((sum, [, value]) => sum + value, 0);
+
+        // Find the threshold index
+        let cumulativeSum = 0;
+        let cutoffIndex = entries.findIndex(([key, value]) => {
+            cumulativeSum += value;
+            // console.log(key, value, cumulativeSum / totalSum)
+            return cumulativeSum / totalSum > threshold;
+        });
+
+        // If no cutoff index found, use the length of the array (all entries in "others")
+        cutoffIndex += 1;
+        cutoffIndex = cutoffIndex === -1 ? entries.length : cutoffIndex;
+
+        // Split the entries into main and others
+        let mainEntries = entries.slice(0, cutoffIndex);
+        let othersEntries = entries.slice(cutoffIndex);
+
+        // Calculate the sum of "others"
+        let othersSum = othersEntries.reduce((sum, [, value]) => sum + value, 0);
+
+        // Create the result object
+        let result = Object.fromEntries(mainEntries);
+        if (othersEntries.length) {
+            result["Others"] = othersSum;
+        }
+
+        return result;
+    }
+}
+
+// let test = { "x": 111, "y": 200, "qq": 190, };
+// let resulttest = clearDic(test);
+// console.log("resulttest", resulttest, Object.keys(resulttest));
+
+
+
+function displayWeekInfo(data, categories, class_name="#week-info-chart-meat", pie_chart_class="pieChart", station_res_id='station-distribution-results', food="meat") {
 // document.addEventListener('DOMContentLoaded', function () {
 //     const data = [
 //         {
@@ -494,8 +608,8 @@ function displayWeekInfo(data, categories) {
         width = 1000 - margin.left - margin.right, //960
         height = 500 - margin.top - margin.bottom;
 
-    d3.select("#week-info-chart").selectAll("*").remove();
-    const svg = d3.select("#week-info-chart").append("svg")
+    d3.select(class_name).selectAll("*").remove();
+    const svg = d3.select(class_name).append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
         .append("g")
@@ -564,7 +678,7 @@ function displayWeekInfo(data, categories) {
         .data(d => categories.map(key => ({
             key,
             value: d.week_count_sum_dic[key]["count"],
-            distribution: d.week_count_sum_dic[key]["distribution"],
+            distribution: clearDic(d.week_count_sum_dic[key]["distribution"]),
         })))
         .enter().append("rect")
         .attr("x", d => x1(d.key)) // Assuming x1 maps the keys correctly
@@ -573,9 +687,10 @@ function displayWeekInfo(data, categories) {
         .attr("height", 0) // Adjust height based on data
         .attr("fill", d => color(d.key))
         .on("mouseover", function(event, d) {
+            document.getElementById(station_res_id).innerHTML = `<canvas id="${pie_chart_class}" style="height: 100px" ></canvas>`;
             console.log("mouseover");
             console.log(d);
-            pieData = pieDataFramework;
+            let pieData = pieDataFramework;
             let n_list = Array.from({ length: Object.keys(d.distribution).length }, (_, i) => i);
             console.log(n_list);
 
@@ -588,14 +703,25 @@ function displayWeekInfo(data, categories) {
             console.log(pieData.labels)
             pieData.datasets[0].data = Object.values(d.distribution);
             pieData.datasets[0].backgroundColor = Object.keys(d.distribution).map(one_key => {
-                let seed = +one_key;
+                let seed;
+                if (one_key === "Others") {
+                    seed = 99999;
+                } else {
+                    seed = +one_key;
+                }
                 return generate_random_rgb(seed, 0.2);
             })
             pieData.datasets[0].borderColor = Object.keys(d.distribution).map(one_key => {
-                let seed = +one_key;
+                let seed;
+                if (one_key === "Others") {
+                    seed = 99999;
+                } else {
+                    seed = +one_key;
+                }
                 return generate_random_rgb(seed, 1.0);
             })
-            const ctx = document.getElementById('pieChart').getContext('2d');
+            console.log("pie_chart_class", pie_chart_class)
+            const ctx = document.getElementById(pie_chart_class).getContext('2d');
             const pieChart = new Chart(ctx, {
                 type: 'pie',
                 data: pieData,
@@ -622,8 +748,11 @@ function displayWeekInfo(data, categories) {
             });
         })
         .on("mouseout", function() {
-                console.log("mouseout");
-                document.getElementById('station-distribution-results').innerHTML = '<canvas id="pieChart" style="height: 100px" ></canvas>'; // Clears the content including the canvas
+            console.log("mouseout");
+            console.log(`<canvas id="${pie_chart_class}" style="height: 100px" ></canvas>`);
+            //<img src="img/food/meat.webp" alt="Meat" height="200px"></a>
+            document.getElementById(station_res_id).innerHTML = `<img src="img/food/${food}.webp" alt="Meat" height="367px"></a>`;
+            //document.getElementById(station_res_id).innerHTML = `<canvas id="${pie_chart_class}" style="height: 100px" ></canvas>`; // Clears the content including the canvas
         });
 
 
@@ -674,9 +803,9 @@ function displayWeekInfo(data, categories) {
         .attr("transform", (d, i) => `translate(0,${i * 20})`);
 
     legend.append("rect")
-        .attr("x", width - 19)
-        .attr("width", 19)
-        .attr("height", 19)
+        .attr("x", width - 15)
+        .attr("width", 15)
+        .attr("height", 15)
         .attr("fill", color);
 
     legend.append("text")
@@ -701,3 +830,5 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 processDataWeek(78390, "All");
+
+processDataWeekVeg(78390, "All");
