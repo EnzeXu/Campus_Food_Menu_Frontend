@@ -426,20 +426,48 @@ function countKeywordsInText(text, target_keys) {
     return results;
 }
 
-const pieData = {
-    labels: ['xxx', 'yyy', 'zzz'],
+function seededRandom(seed) {
+    let value = seed;
+    return function() {
+        value = (value * 9301 + 49297) % 233280; // Example PRNG formula
+        return value / 233280;
+    }
+}
+
+function generate_random_rgb(seed, alpha=1) {
+    const random = seededRandom(seed); // Initialize the PRNG with the seed
+    const r = Math.floor(random() * 256); // Random number between 0 and 255
+    const g = Math.floor(random() * 256);
+    const b = Math.floor(random() * 256);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+const pieDataFramework = {
+    labels: [],
     datasets: [{
-        label: 'Station Distribution',
-        data: [10, 20, 30],
+        // label: 'Station Distribution',
+        data: [],
         backgroundColor: [
             'rgba(255, 99, 132, 0.2)',
             'rgba(54, 162, 235, 0.2)',
-            'rgba(255, 206, 86, 0.2)'
+            'rgba(255, 206, 86, 0.2)',
+            'rgba(255, 99, 132, 0.2)',
+            'rgba(54, 162, 235, 0.2)',
+            'rgba(255, 206, 86, 0.2)',
+            'rgba(255, 99, 132, 0.2)',
+            'rgba(54, 162, 235, 0.2)',
+            'rgba(255, 206, 86, 0.2)',
         ],
         borderColor: [
             'rgba(255, 99, 132, 1)',
             'rgba(54, 162, 235, 1)',
-            'rgba(255, 206, 86, 1)'
+            'rgba(255, 206, 86, 1)',
+            'rgba(255, 99, 132, 1)',
+            'rgba(54, 162, 235, 1)',
+            'rgba(255, 206, 86, 1)',
+            'rgba(255, 99, 132, 1)',
+            'rgba(54, 162, 235, 1)',
+            'rgba(255, 206, 86, 1)',
         ],
         borderWidth: 1
     }]
@@ -463,7 +491,7 @@ function displayWeekInfo(data, categories) {
     console.log(data);
 
     const margin = {top: 20, right: 20, bottom: 30, left: 40},
-        width = 1400 - margin.left - margin.right, //960
+        width = 1000 - margin.left - margin.right, //960
         height = 500 - margin.top - margin.bottom;
 
     d3.select("#week-info-chart").selectAll("*").remove();
@@ -522,16 +550,42 @@ function displayWeekInfo(data, categories) {
 
     // console.log(x1.bandwidth())
     const bar = group.selectAll("rect")
-        .data(d => categories.map(key => ({ key, value: d.week_count_sum_dic[key]["count"] })))
-        .enter().append("rect")
+        // // .data(d => categories.map(key => ({ key, value: {"count": d.week_count_sum_dic[key]["count"], "distribution": d.week_count_sum_dic[key]["distribution"]} })))
+        // .data(d => categories.map(key => ({ key, value: d.week_count_sum_dic[key]["count"]})))
+        // .enter().append("rect")
+        // // .attr("x", d => x1(d.key))
         // .attr("x", d => x1(d.key))
-        .attr("x", d => x1(d.key))
-        .attr("y", y(0))
-        .attr("width", x1.bandwidth()) // Math.min(x1.bandwidth(), 46)
-        .attr("height", 0)
+        // // .attr("y", y(0))
+        // .attr("y", d => y(0))
+        // .attr("width", x1.bandwidth()) // Math.min(x1.bandwidth(), 46)
+        // // .attr("height", 0)
+        // .attr("height", 0)
+        // .attr("fill", d => color(d.key))
+        .data(d => categories.map(key => ({
+            key,
+            value: d.week_count_sum_dic[key]["count"],
+            distribution: d.week_count_sum_dic[key]["distribution"],
+        })))
+        .enter().append("rect")
+        .attr("x", d => x1(d.key)) // Assuming x1 maps the keys correctly
+        .attr("y", d => y(0)) // Adjust to map to the count value
+        .attr("width", x1.bandwidth()) // Ensure x1.bandwidth is properly defined
+        .attr("height", 0) // Adjust height based on data
         .attr("fill", d => color(d.key))
         .on("mouseover", function(event, d) {
             console.log("mouseover");
+            console.log(d);
+            pieData = pieDataFramework;
+            pieData.labels = Object.keys(d.distribution).map(one_key => station_dictionary[one_key]);
+            pieData.datasets[0].data = Object.values(d.distribution);
+            pieData.datasets[0].backgroundColor = Object.keys(d.distribution).map(one_key => {
+                let seed = +one_key;
+                return generate_random_rgb(seed, 0.2);
+            })
+            pieData.datasets[0].borderColor = Object.keys(d.distribution).map(one_key => {
+                let seed = +one_key;
+                return generate_random_rgb(seed, 1.0);
+            })
             const ctx = document.getElementById('pieChart').getContext('2d');
             const pieChart = new Chart(ctx, {
                 type: 'pie',
@@ -540,7 +594,15 @@ function displayWeekInfo(data, categories) {
                     responsive: true,
                     plugins: {
                         legend: {
-                            position: 'top',
+                            position: 'right', // Positions the legend on the right side to ensure single column
+                            labels: {
+                                color: "black",
+                                font: {
+                                    size: 17, // Set desired font size
+                                    // family: 'Arial, sans-serif', // Set desired font family
+                                    // weight: 'bold' // Set desired font weight
+                                }
+                            }
                         },
                         tooltip: {
                             mode: 'index',

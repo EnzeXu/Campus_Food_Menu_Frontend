@@ -1024,3 +1024,21 @@ section div p.lead{
     height: 50px;
 }
 
+
+
+.week-info {
+    width: 100%;
+}
+
+.week-info-left {
+    display: inline-block;
+    /*width: 80%;*/
+    vertical-align: top;
+}
+
+.week-info-right {
+    display: inline-block;
+    width: 25%;
+    vertical-align: center;
+    horiz-align: center;
+}
