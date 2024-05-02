@@ -411,6 +411,25 @@ function countKeywordsInText(text, target_keys) {
     return results;
 }
 
+const pieData = {
+    labels: ['xxx', 'yyy', 'zzz'],
+    datasets: [{
+        label: 'Station Distribution',
+        data: [10, 20, 30],
+        backgroundColor: [
+            'rgba(255, 99, 132, 0.2)',
+            'rgba(54, 162, 235, 0.2)',
+            'rgba(255, 206, 86, 0.2)'
+        ],
+        borderColor: [
+            'rgba(255, 99, 132, 1)',
+            'rgba(54, 162, 235, 1)',
+            'rgba(255, 206, 86, 1)'
+        ],
+        borderWidth: 1
+    }]
+};
+
 
 function displayWeekInfo(data, categories) {
 // document.addEventListener('DOMContentLoaded', function () {
@@ -483,6 +502,8 @@ function displayWeekInfo(data, categories) {
         .enter().append("g")
         .attr("transform", d => `translate(${x0(`${d.week_start_date} - ${d.week_end_date}`)},0)`);
 
+
+
     // console.log(x1.bandwidth())
     const bar = group.selectAll("rect")
         .data(d => categories.map(key => ({ key, value: d.week_count_sum_dic[key] })))
@@ -492,7 +513,32 @@ function displayWeekInfo(data, categories) {
         .attr("y", y(0))
         .attr("width", x1.bandwidth()) // Math.min(x1.bandwidth(), 46)
         .attr("height", 0)
-        .attr("fill", d => color(d.key));
+        .attr("fill", d => color(d.key))
+        .on("mouseover", function(event, d) {
+            console.log("mouseover");
+            const ctx = document.getElementById('pieChart').getContext('2d');
+            const pieChart = new Chart(ctx, {
+                type: 'pie',
+                data: pieData,
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                    }
+                }
+            });
+        })
+        .on("mouseout", function() {
+                console.log("mouseout");
+                document.getElementById('station-distribution-results').innerHTML = '<canvas id="pieChart" style="height: 100px" ></canvas>'; // Clears the content including the canvas
+        });
+
 
     const barText = group.selectAll("text.value")
         .data(d => categories.map(key => ({ key, value: d.week_count_sum_dic[key] })))
