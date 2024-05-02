@@ -165,9 +165,9 @@ function fetchDataFromPath(path) {
             return response.json();
         });
 }
-
+//, "ProductId"
 function displayResults(results, keyword) {
-    let product_keywords = ["Period", "Station", "ProductId", "MarketingName", "ShortDescription", "IsOrganic", "IsVegan", "IsVegetarian", "ServingSize", "ServingUnit", "Calories", "CaloriesFromFat", "IngredientStatement"];
+    let product_keywords = ["Period", "Station", "MarketingName", "ShortDescription", "IsOrganic", "IsVegan", "IsVegetarian", "ServingSize", "ServingUnit", "Calories", "CaloriesFromFat", "IngredientStatement"];
     let title_html = "";
     product_keywords.forEach(item => {
         title_html += `<th>${item}</th>`;
@@ -783,7 +783,7 @@ function displayWeekInfo(data, categories, class_name="#week-info-chart-meat", p
         .attr("transform", `translate(0,${height})`)
         .call(d3.axisBottom(x0))
         .selectAll("text")
-        .style("font-size", "16px");
+        .style("font-size", "12px");
 
     // Add y-axis
     svg.append("g")

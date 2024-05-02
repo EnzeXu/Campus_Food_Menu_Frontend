@@ -407,7 +407,8 @@ button:focus,
 /*}*/
 
 .navbar .nav-item.colored a {
-    color: #ff6c0c;
+    color: #000000;
+    /*color: #ff6c0c;*/
     font-weight: normal;
 }
 
@@ -418,7 +419,8 @@ button:focus,
     font-weight: normal;
 }
 .navbar .nav-item.uncolored a:hover {
-    color: #ff6c0c;
+    color: #000000;
+    /*color: #ff6c0c;color: #ff6c0c;*/
     font-weight: normal;
 }
 
@@ -1041,4 +1043,11 @@ section div p.lead{
     width: 25%;
     vertical-align: center;
     horiz-align: center;
+}
+
+#search-results {
+    width: 100%;
+    max-height: 1000px; /* Adjust to your desired maximum height */
+    overflow-y: auto; /* Add a scrollbar if content exceeds max-height */
+    border: 1px solid #ccc; /* Optional: To visually see the div boundaries */
 }
