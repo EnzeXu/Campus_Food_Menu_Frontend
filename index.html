@@ -22,6 +22,8 @@
         <link href="css/style.css" rel="stylesheet">
 
         <script src="https://d3js.org/d3.v6.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 
 
     </head>
@@ -69,6 +71,9 @@
                                 <li class="hidden"><a href="#page-top"></a></li>
                                 <li class="nav-item colored"> <a href="#page-top" style="font-size: 24px">Home</a> </li>
                                 <li class="nav-item colored"> <a href="#Restaurants" style="font-size: 24px">Restaurants</a> </li>
+                                <li class="nav-item colored"> <a href="#section-searchbar" style="font-size: 24px">Search</a> </li>
+                                <li class="nav-item colored"> <a href="#section-analysis" style="font-size: 24px">Analysis</a> </li>
+
                                 <!-- <li><a class="page-scroll" href="#section-schedule">Schedule</a></li> -->
 <!--                                <li><a class="page-scroll" href="#section-registration">Registration</a></li>-->
 <!--                                <li><a class="page-scroll" href="#section-intro">Introduction</a></li>-->
@@ -242,7 +247,7 @@
                 </div>
             </section>
 
-            <section id="section-analysis" class="section-wrapper about-event">
+             <section id="section-analysis" class="section-wrapper about-event">
                 <div class="container">
                     <div class="row">
                         <div class="col-md-12">
@@ -280,6 +285,10 @@
                         </div>
                     </div>
                     <div id="week-info-chart"></div>
+                    <div id="station-distribution-results" style="height: 500px">
+                        <canvas id="pieChart" style="height: 100px" ></canvas>
+                    </div>
+
                 </div>
             </section>
 
