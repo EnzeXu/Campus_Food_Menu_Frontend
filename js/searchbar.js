@@ -309,6 +309,15 @@ function getOperatingSystem() {
 //
 // processDataWeek(78391);
 
+function updateDictionaryByOne(base_dic, add_class) {
+    if (base_dic[add_class]) {
+        base_dic[add_class] += 1;
+    } else {
+        base_dic[add_class] = 1;
+    }
+    return base_dic;
+}
+
 function collectWeekInfo(dic, available_dates) {
     console.log(dic);
     const millisecondsPerDay = 24 * 60 * 60 * 1000; // Number of milliseconds in a day
@@ -328,7 +337,10 @@ function collectWeekInfo(dic, available_dates) {
 
         let week_count_sum_dic = {};
         Object.keys(target_food_keys).forEach(one_key => {
-            week_count_sum_dic[one_key] = 0;
+            week_count_sum_dic[one_key] = {
+                "count": 0,
+                "distribution": {},
+            };
         })
 
         for (let j = i; j <= i + 6 && j < available_dates.length; j++) {
@@ -341,7 +353,10 @@ function collectWeekInfo(dic, available_dates) {
                         // console.log("context", context);
                         let one_count_dic = countKeywordsInText(context, target_food_keys);
                         Object.keys(target_food_keys).forEach(one_keyword => {
-                            week_count_sum_dic[one_keyword] += one_count_dic[one_keyword];
+                            week_count_sum_dic[one_keyword]["count"] += one_count_dic[one_keyword];
+                            if (one_count_dic[one_keyword]) {
+                                week_count_sum_dic[one_keyword]["distribution"] = updateDictionaryByOne(week_count_sum_dic[one_keyword]["distribution"], one_dish["StationId"]);
+                            }
                         })
                     });
 
@@ -426,6 +441,7 @@ function displayWeekInfo(data, categories) {
 //             "week_count_sum_dic": {chicken: 112, pork: 120, beef: 60, fish: 15, lamb: 8}
 //         }
 //     ];
+    console.log(data);
 
     const margin = {top: 20, right: 20, bottom: 30, left: 40},
         width = 1400 - margin.left - margin.right, //960
@@ -461,7 +477,7 @@ function displayWeekInfo(data, categories) {
 
     x0.domain(data.map(d => `${d.week_start_date} - ${d.week_end_date}`));
     x1.domain(categories).rangeRound([0, x0.bandwidth()]);
-    y.domain([0, d3.max(data, d => d3.max(categories, key => d.week_count_sum_dic[key]))]).nice();
+    y.domain([0, d3.max(data, d => d3.max(categories, key => d.week_count_sum_dic[key]["count"]))]).nice();
 
     // svg.append("g")
     //     .selectAll("g")
@@ -485,7 +501,7 @@ function displayWeekInfo(data, categories) {
 
     // console.log(x1.bandwidth())
     const bar = group.selectAll("rect")
-        .data(d => categories.map(key => ({ key, value: d.week_count_sum_dic[key] })))
+        .data(d => categories.map(key => ({ key, value: d.week_count_sum_dic[key]["count"] })))
         .enter().append("rect")
         // .attr("x", d => x1(d.key))
         .attr("x", d => x1(d.key))
@@ -495,7 +511,7 @@ function displayWeekInfo(data, categories) {
         .attr("fill", d => color(d.key));
 
     const barText = group.selectAll("text.value")
-        .data(d => categories.map(key => ({ key, value: d.week_count_sum_dic[key] })))
+        .data(d => categories.map(key => ({ key, value: d.week_count_sum_dic[key]["count"] })))
         .enter().append("text")
         .attr("class", "value")
         .attr("x", d => x1(d.key) + x1.bandwidth() / 2)
