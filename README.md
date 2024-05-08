@@ -60,6 +60,19 @@ To get a local copy up and running, follow these simple steps:
 
 # 4. Screenshots
 
+![23871715198002_ pic](https://github.com/EnzeXu/Campus_Food_Menu_Frontend/assets/90367338/eef2e819-4b03-45a5-abfa-f87089cef39b)
+
+![23881715198015_ pic](https://github.com/EnzeXu/Campus_Food_Menu_Frontend/assets/90367338/79ccbdb3-0120-4bd5-982f-cb730b5911a0)
+
+![23891715198067_ pic](https://github.com/EnzeXu/Campus_Food_Menu_Frontend/assets/90367338/89856473-5336-42e9-8de8-761961ad281c)
+
+![23901715198104_ pic](https://github.com/EnzeXu/Campus_Food_Menu_Frontend/assets/90367338/7f090370-d6d5-41b6-a2a0-5f7335fdd0c9)
+
+![23911715198159_ pic](https://github.com/EnzeXu/Campus_Food_Menu_Frontend/assets/90367338/8b06b82b-a391-4caf-b8a1-5b6199f50448)
+
+![23921715198537_ pic](https://github.com/EnzeXu/Campus_Food_Menu_Frontend/assets/90367338/187091ae-b47f-4cb7-b1c8-bec55aa79cfa)
+
+![23931715198567_ pic](https://github.com/EnzeXu/Campus_Food_Menu_Frontend/assets/90367338/2d6bdb5f-a6aa-4d2e-ba45-1373f6775411)
 
 
 
