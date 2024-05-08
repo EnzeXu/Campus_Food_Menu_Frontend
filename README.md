@@ -1,7 +1,7 @@
 
 # Campus Food Menu
 
-Welcome to the Food Menu Website, a simple yet interactive website designed to showcase our delightful menu selections.
+Welcome to the Campus Food Menu Website, a simple yet interactive website designed to showcase our delightful menu selections.
 
 ---
 
